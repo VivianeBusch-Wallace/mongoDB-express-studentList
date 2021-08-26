@@ -24,3 +24,6 @@ const userDataSchema = new mongoose.Schema({
     trim: true,
   },
 });
+
+// creating a new collection using the schema
+module.exports = mongoose.model("UsersData", usersDataSchema, "UsersData");
