@@ -11,14 +11,14 @@ const showAllUsers = async (req, res) => {
     console.log(users);
     // mapping out following user data >>
     res.status(200).json(
-      users.map((users) => {
+      users.map((user) => {
         return {
-          userId: users._id,
-          userName: users.userName,
-          age: users.age,
-          fbw: users.fbw,
-          toolStack: users.toolStack,
-          email: users.email,
+          userId: user._id,
+          userName: user.userName,
+          age: user.age,
+          fbw: user.fbw,
+          toolStack: user.toolStack,
+          email: user.email,
           request: {
             type: "GET",
             url: `http://localhost:5000/users/${user.userName}`,
