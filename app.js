@@ -18,3 +18,15 @@ mongoose
   .catch((err) => {
     console.log(`There was a problem. Error: ${err.message}`);
   });
+
+// root route >>
+app.get("/", (req, res) => {
+  res.status(200).send("Welcome to our Student List App.");
+});
+
+// sutdent routes >>
+const students = require("./router/students");
+app.use("/students", students);
+
+// export app (imported in: server.js) >>
+module.exports = app;
