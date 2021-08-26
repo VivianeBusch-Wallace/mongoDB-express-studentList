@@ -33,3 +33,4 @@ const userDataSchema = new mongoose.Schema({
 
 // creating a new collection using the schema and at the same time loading previous data
 module.exports = mongoose.model("UsersData", userDataSchema, "UsersData");
+// << UsersData is the name of our collection
