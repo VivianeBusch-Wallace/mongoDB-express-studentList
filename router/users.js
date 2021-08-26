@@ -3,5 +3,4 @@ const express = require("express");
 const router = express.Router();
 
 // model >>
-const StudentsData = require("../model/usersModel");
- 
+const UsersData = require("../model/usersModel");
