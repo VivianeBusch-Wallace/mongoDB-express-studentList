@@ -24,9 +24,9 @@ app.get("/", (req, res) => {
   res.status(200).send("Welcome to our Student List App.");
 });
 
-// sutdent routes >>
-const students = require("./router/students");
-app.use("/students", students);
+// student routes are handled in router/students >>
+const students = require("./router/users");
+app.use("/users", users);
 
 // export app (imported in: server.js) >>
 module.exports = app;
