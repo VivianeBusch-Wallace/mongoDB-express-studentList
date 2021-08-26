@@ -3,6 +3,9 @@ const UsersData = require("../model/usersModel");
 
 // All Middlewares >>
 
+// get specific user middleware >>
+
+
 // show all users (GET http://localhost:5000/users/) >>
 const showAllUsers = async (req, res) => {
   try {
@@ -54,6 +57,12 @@ const addNewUser = async (req, res) => {
   }
 };
 
+// get specific user by name
+const showUser = async (req,res) => {
+    // check middleware: 
+    res.status(200).json({res.user})
+}
+
 // update specific user upon their name >>
 const updateUser = async (req, res) => {
   const { userName, userPass, age, fbw, toolStack, email } = req.body;
@@ -76,5 +85,7 @@ const updateUser = async (req, res) => {
     res.status(400).json({ message: err.message });
   }
 };
+
+//
 
 module.exports = { showAllUsers, addNewUser, updateUser };
