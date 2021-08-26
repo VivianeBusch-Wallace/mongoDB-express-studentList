@@ -54,4 +54,27 @@ const addNewUser = async (req, res) => {
   }
 };
 
-module.exports = { showAllUsers, addNewUser };
+// update specific user upon their name >>
+const updateUser = async (req, res) => {
+  const { userName, userPass, age, fbw, toolStack, email } = req.body;
+  if (userName) {
+    res.user.userName = userName;
+  } else if (userPass) {
+    res.user.userPass = userPass;
+  } else if (age) {
+    res.user.age = age;
+  } else if (fbw) {
+    res.user.fbw = fbw;
+  } else if (toolStack.length > 0) {
+    res.user.toolStack = toolStack;
+  } else if (email) {
+    res.user.email = email;
+  }
+  try {
+    await res.user.save();
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};
+
+module.exports = { showAllUsers, addNewUser, updateUser };
