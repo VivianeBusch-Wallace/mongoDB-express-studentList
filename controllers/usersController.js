@@ -8,7 +8,12 @@ const showSingleUserMiddleware = async (req, res, next) => {
   let user;
   try {
     // find user by name >>
-    user = await UsersData.findOne({ userName: req.params.userName });
+    user = await UsersData.findOne({
+      userName: req.params.userName.toLowerCase(),
+    });
+    let firstLetter = user.userName.charAt(0).toUpperCase();
+    let restLetters = user.userName.slice(1);
+    user.userName = firstLetter + restLetters;
     console.log(user);
     // if no user found >>
     if (!user) {
@@ -56,7 +61,7 @@ const showAllUsers = async (req, res) => {
 const addNewUser = async (req, res) => {
   // assigning data from body >>
   const user = new UsersData({
-    userName: req.body.userName,
+    userName: req.body.userName.toLowerCase(), // only lowercase names can be saved in the database for now
     userPass: req.body.userPass,
     age: req.body.age,
     fbw: req.body.fbw,
