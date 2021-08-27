@@ -8,6 +8,7 @@ const UsersData = require("../model/usersModel");
 // controller functions >>
 const {
   showAllUsers,
+  showSingleUser,
   addNewUser,
   updateUser,
 } = require("../controllers/usersController");
@@ -16,6 +17,9 @@ const {
 router.route("/").get(showAllUsers).post(addNewUser);
 
 // route with name value >>
-router.route("/:userName").patch(updateUser);
+router.route("/:userName").patch(updateUser).get(showSingleUser);
+
+// route to display only one user >>
+router.route("/display/:userName").get(showSingleUser);
 
 module.exports = router;

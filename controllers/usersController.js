@@ -3,8 +3,26 @@ const UsersData = require("../model/usersModel");
 
 // All Middlewares >>
 
-// get specific user middleware >>
+// get specific user middleware (GET http://localhost:5000/users/display/:userName) >>
+const showSingleUserMiddleware = async (req, res, next) => {
+  let user;
+  try {
+    // find user by name >>
+    user = await UsersData.findOne({ userName: req.params.userName });
+    console.log(user);
+    // if no user found >>
+    if (!user) {
+      return res.status(404).json({ message: "Sorry, couldn't find user." }); // error 404 = Not Found
+      console.log("Sorry, no user found.");
+    }
+  } catch (err) {
+    res.status(500).json({ message: err.message }); // error 500 = Internal Server Error
+  }
+  // user = res.user;
+  res.user = user;
 
+  next();
+};
 
 // show all users (GET http://localhost:5000/users/) >>
 const showAllUsers = async (req, res) => {
@@ -34,7 +52,7 @@ const showAllUsers = async (req, res) => {
   }
 };
 
-// adding a new user to database >>
+// adding a new user to database (POST http://localhost:5000/users/) >>
 const addNewUser = async (req, res) => {
   // assigning data from body >>
   const user = new UsersData({
@@ -57,11 +75,11 @@ const addNewUser = async (req, res) => {
   }
 };
 
-// get specific user by name
-const showUser = async (req,res) => {
-    // check middleware: 
-    res.status(200).json({res.user})
-}
+// get specific user by name (GET http://localhost:5000/users/display/:userName) >>
+const showSingleUser = async (req, res) => {
+  // check middleware: showSingleUser
+  res.status(200).json(res.user);
+};
 
 // update specific user upon their name >>
 const updateUser = async (req, res) => {
@@ -88,4 +106,4 @@ const updateUser = async (req, res) => {
 
 //
 
-module.exports = { showAllUsers, addNewUser, updateUser };
+module.exports = { showAllUsers, addNewUser, updateUser, showSingleUser };
