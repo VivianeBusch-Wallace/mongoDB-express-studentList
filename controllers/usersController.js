@@ -12,8 +12,8 @@ const showSingleUserMiddleware = async (req, res, next) => {
     console.log(user);
     // if no user found >>
     if (!user) {
-      return res.status(404).json({ message: "Sorry, couldn't find user." }); // error 404 = Not Found
       console.log("Sorry, no user found.");
+      return res.status(404).json({ message: "Sorry, couldn't find user." }); // error 404 = Not Found
     }
   } catch (err) {
     res.status(500).json({ message: err.message }); // error 500 = Internal Server Error
@@ -106,4 +106,10 @@ const updateUser = async (req, res) => {
 
 //
 
-module.exports = { showAllUsers, addNewUser, updateUser, showSingleUser };
+module.exports = {
+  showAllUsers,
+  addNewUser,
+  updateUser,
+  showSingleUser,
+  showSingleUserMiddleware,
+};
