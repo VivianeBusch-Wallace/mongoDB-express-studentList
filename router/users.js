@@ -18,7 +18,8 @@ const {
 router.route("/").get(showAllUsers).post(addNewUser);
 
 // route with name value: http://localhost:5000/users/:userName >>
-router.route("/:userName").patch(updateUser).put();
+router.route("/:userName").patch(updateUser);
+//.put();
 
 // route to display only one specific user: http://localhost:5000/display/:userName >>
 router

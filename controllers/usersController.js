@@ -96,25 +96,28 @@ const updateUser = async (req, res) => {
     res.user.age = age;
   } else if (fbw) {
     res.user.fbw = fbw;
-  } else if (toolStack.length > 0) {
+  } else if (toolStack) {
     res.user.toolStack = toolStack;
   } else if (email) {
     res.user.email = email;
   }
+  // << try switch case?
+
   try {
     await res.user.save();
+    res.status(200).json({ message: "user updated with: ", data: res.user });
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    res.status(400).json({ message: err.message }); // error 400 = Bad Request
   }
 };
 
 // get specific user by name (GET http://localhost:5000/users/display/:userName) >>
 const showSingleUser = async (req, res) => {
-  // check middleware: showSingleUser
+  // check middleware: showSingleUserMiddleware
   res.status(200).json(res.user);
 };
 
-// 
+//
 
 module.exports = {
   showAllUsers,
