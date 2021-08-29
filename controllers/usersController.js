@@ -1,4 +1,5 @@
 const express = require("express");
+
 const UsersData = require("../model/usersModel");
 
 // All Middlewares >>
@@ -7,10 +8,11 @@ const UsersData = require("../model/usersModel");
 const showSingleUserMiddleware = async (req, res, next) => {
   let user;
   try {
-    // find user by name >>
+    // find user by user name in lowercase because the data is in lowercase >>
     user = await UsersData.findOne({
       userName: req.params.userName.toLowerCase(),
     });
+    // display the user name with first letter capitalized >>
     let firstLetter = user.userName.charAt(0).toUpperCase();
     let restLetters = user.userName.slice(1);
     user.userName = firstLetter + restLetters;
@@ -28,6 +30,9 @@ const showSingleUserMiddleware = async (req, res, next) => {
 
   next();
 };
+
+// ----------------------
+// All Route Functions >>
 
 // show all users (GET http://localhost:5000/users/) >>
 const showAllUsers = async (req, res) => {
@@ -80,13 +85,7 @@ const addNewUser = async (req, res) => {
   }
 };
 
-// get specific user by name (GET http://localhost:5000/users/display/:userName) >>
-const showSingleUser = async (req, res) => {
-  // check middleware: showSingleUser
-  res.status(200).json(res.user);
-};
-
-// update specific user upon their name >>
+// update specific user upon their name (GET http://localhost:5000/users/:userName) >>
 const updateUser = async (req, res) => {
   const { userName, userPass, age, fbw, toolStack, email } = req.body;
   if (userName) {
@@ -109,7 +108,13 @@ const updateUser = async (req, res) => {
   }
 };
 
-//
+// get specific user by name (GET http://localhost:5000/users/display/:userName) >>
+const showSingleUser = async (req, res) => {
+  // check middleware: showSingleUser
+  res.status(200).json(res.user);
+};
+
+// 
 
 module.exports = {
   showAllUsers,

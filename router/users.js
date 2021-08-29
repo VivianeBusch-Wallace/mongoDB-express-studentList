@@ -17,10 +17,10 @@ const {
 // root route of users: http://localhost:5000/users/ >>
 router.route("/").get(showAllUsers).post(addNewUser);
 
-// route with name value >>
-router.route("/:userName").patch(updateUser).get(showSingleUser);
+// route with name value: http://localhost:5000/users/:userName >>
+router.route("/:userName").patch(updateUser).put();
 
-// route to display only one user >>
+// route to display only one specific user: http://localhost:5000/display/:userName >>
 router
   .route("/display/:userName")
   .get(showSingleUserMiddleware, showSingleUser);
