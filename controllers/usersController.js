@@ -7,26 +7,40 @@ const UsersData = require("../model/usersModel");
 // get specific user middleware (GET http://localhost:5000/users/display/:userName) >>
 const showSingleUserMiddleware = async (req, res, next) => {
   let user;
+
   try {
     // find user by user name in lowercase because the data is in lowercase >>
     user = await UsersData.findOne({
       userName: req.params.userName.toLowerCase(),
     });
+
     // display the user name with first letter capitalized >>
     let firstLetter = user.userName.charAt(0).toUpperCase();
     let restLetters = user.userName.slice(1);
     user.userName = firstLetter + restLetters;
-    console.log(user);
-    // if no user found >>
+
+    // converting age and fbw into numbers and sorting toolStack alphabetically in a new object >>
+    let userInfo = {
+      userName: user.userName,
+      userPass: user.userPass,
+      age: parseInt(user.age),
+      fbw: parseInt(user.fbw),
+      toolStack: user.toolStack.sort(),
+      email: user.email,
+    };
+    // console.log(user);
+    // console.log(userInfo);
+
+    // if no user found in the db >>
     if (!user) {
       console.log("Sorry, no user found.");
       return res.status(404).json({ message: "Sorry, couldn't find user." }); // error 404 = Not Found
     }
+    res.user = userInfo;
+    // return userInfo; // why does this not work???
   } catch (err) {
     res.status(500).json({ message: err.message }); // error 500 = Internal Server Error
   }
-  // user = res.user;
-  res.user = user;
 
   next();
 };
@@ -115,6 +129,7 @@ const updateUser = async (req, res) => {
 const showSingleUser = async (req, res) => {
   // check middleware: showSingleUserMiddleware
   res.status(200).json(res.user);
+  // res.status(200).json(userInfo);
 };
 
 //
@@ -126,3 +141,20 @@ module.exports = {
   showSingleUser,
   showSingleUserMiddleware,
 };
+
+// Notes
+
+// my struggle with deep copying the object:
+
+// let ageNum = user.age;
+// let fbwNum = user.fbw;
+// user.age = parseInt(ageNum);
+// let fullUser = user;
+// // user.age = user.parseInt(age);
+// console.log(fullUser);
+// console.log(parseInt(ageNum));
+// console.log(parseInt(fbwNum));
+// console.log(typeof user.age);
+// console.log(user.userName);
+// turn age and fbw into numbers >>
+// console.log(user.age);
