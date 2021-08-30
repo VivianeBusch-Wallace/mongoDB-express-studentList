@@ -14,6 +14,16 @@ const showSingleUserMiddleware = async (req, res, next) => {
       userName: req.params.userName.toLowerCase(),
     });
 
+    // if no user found in the db >>
+    if (!user) {
+      console.log("Sorry, no user found.");
+      return res
+        .status(404)
+        .json({
+          message: `Sorry, couldn't find anyone named: ${req.params.userName}.`,
+        }); // error 404 = Not Found
+    }
+
     // display the user name with first letter capitalized >>
     let firstLetter = user.userName.charAt(0).toUpperCase();
     let restLetters = user.userName.slice(1);
@@ -28,16 +38,10 @@ const showSingleUserMiddleware = async (req, res, next) => {
       toolStack: user.toolStack.sort(),
       email: user.email,
     };
-    // console.log(user);
+    console.log(user);
     // console.log(userInfo);
-
-    // if no user found in the db >>
-    if (!user) {
-      console.log("Sorry, no user found.");
-      return res.status(404).json({ message: "Sorry, couldn't find user." }); // error 404 = Not Found
-    }
+    // assigning userInfo to res.user which is then sent to the controller func >>
     res.user = userInfo;
-    // return userInfo; // why does this not work???
   } catch (err) {
     res.status(500).json({ message: err.message }); // error 500 = Internal Server Error
   }
@@ -142,19 +146,5 @@ module.exports = {
   showSingleUserMiddleware,
 };
 
+// ------------------------
 // Notes
-
-// my struggle with deep copying the object:
-
-// let ageNum = user.age;
-// let fbwNum = user.fbw;
-// user.age = parseInt(ageNum);
-// let fullUser = user;
-// // user.age = user.parseInt(age);
-// console.log(fullUser);
-// console.log(parseInt(ageNum));
-// console.log(parseInt(fbwNum));
-// console.log(typeof user.age);
-// console.log(user.userName);
-// turn age and fbw into numbers >>
-// console.log(user.age);
