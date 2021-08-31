@@ -4,20 +4,35 @@ const UsersData = require("../model/usersModel");
 
 // All Middlewares >>
 
-// Create a middleware method that will make sure the object received contains userName, userPass, age, fbw and email.
-// Checking if user information has the required information
+// Task: Create a middleware method that will check if the user is above 18 years old
+// checking if user's age is above 18
+const checkAgeMW = (req, res, next) => {
+  if (req.body.age > 18) {
+    console.log("Success! User's age is valid!");
+    next();
+  } else {
+    return res.status(400).json({
+      message:
+        "Sorry, we cannot validate your user. We don't accept people that are 18 years or under.",
+    });
+  }
+};
+
+// Task: Create a middleware method that will make sure the object received contains userName, userPass, age, fbw and email.
+// Checking if user information has the required information >>
 const checkContentMW = async (req, res, next) => {
   // destructuring the given information from the user >>
   const { userName, userPass, age, fbw, email } = req.body;
 
   // if the information is not empty, then move on >>
   if (userName && userPass && age && fbw && email) {
+    console.log("Success! User data valid!");
     next();
   } else {
-    res.status(400).json({
+    return res.status(400).json({
       message:
         "Sorry, missing information. Please type in the user's name, password, age, fbw number, and email address.",
-    }); // if data is missing in the input then we get error 400 = Bad Request
+    }); // << if data is missing in the input then we get error 400 = Bad Request
   }
 };
 
@@ -119,7 +134,9 @@ const addNewUser = async (req, res) => {
     const newUser = await user.save();
 
     // sending status for success >>
-    res.status(201).json({ newUser }); // created
+    res
+      .status(201)
+      .json({ message: "Success! New user added with: ", newUser }); // new user created
   } catch (err) {
     res.status(400).json({ message: err.message }); // bad request
   }
@@ -149,7 +166,9 @@ const updateUser = async (req, res) => {
     await res.users.save();
 
     // send response if successful >>
-    res.status(200).json({ message: "user updated with: ", data: res.users });
+    res
+      .status(200)
+      .json({ message: "Success! User updated with: ", data: res.users });
   } catch (err) {
     res.status(400).json({ message: err.message }); // error 400 = Bad Request
   }
