@@ -4,6 +4,13 @@ const UsersData = require("../model/usersModel");
 
 // All Middlewares >>
 
+// Create a middleware method that will make sure the object received contains userName, userPass, age, fbw and email.
+const checkContentMW = async (req, res, next) => {
+  const userData = await UsersData.find();
+  console.log(userData);
+  next();
+};
+
 // get specific user middleware (GET http://localhost:5000/users/display/:userName) >>
 const showSingleUserMiddleware = async (req, res, next) => {
   let user;
@@ -46,9 +53,16 @@ const showSingleUserMiddleware = async (req, res, next) => {
 
   next();
 };
+// Middleware for updating with patch >>
+const updateUserMiddleware = async (req, res, next) => {
+  let user = await UsersData.findOne({ userName: req.params.userName });
+  res.users = user;
+  console.log(user);
+  next();
+};
 
 // ----------------------
-// All Route Functions >>
+// All Controler Functions >>
 
 // show all users (GET http://localhost:5000/users/) >>
 const showAllUsers = async (req, res) => {
@@ -101,14 +115,7 @@ const addNewUser = async (req, res) => {
   }
 };
 
-const updateUserMiddleware = async (req, res, next) => {
-  let user = await UsersData.findOne({ userName: req.params.userName });
-  res.users = user;
-  console.log(user)
-  next();
-};
-
-// update specific user upon their name (GET http://localhost:5000/users/:userName) >>
+// update specific user upon their name (PATCH http://localhost:5000/users/:userName) >>
 const updateUser = async (req, res) => {
   const { userName, userPass, age, fbw, toolStack, email } = req.body;
 
@@ -126,8 +133,6 @@ const updateUser = async (req, res) => {
   } else if (email) {
     res.users.email = email;
   }
-
-  // << try switch case?
   console.log(res.users);
   try {
     // save new data >>
