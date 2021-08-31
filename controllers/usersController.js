@@ -57,7 +57,7 @@ const showSingleUserMiddleware = async (req, res, next) => {
   try {
     // find user by user name in lowercase because the data is in lowercase >>
     user = await UsersData.findOne({
-      userName: req.params.userName.toLowerCase(),
+      userName: req.params.userName,
     });
 
     // if no user found in the db >>
@@ -89,7 +89,126 @@ const showSingleUserMiddleware = async (req, res, next) => {
   } catch (err) {
     res.status(500).json({ message: err.message }); // error 500 = Internal Server Error
   }
+  next();
+};
 
+// Middleware for displaying userName with first char as uppercase >>
+const capitlizeFirstCharMW = async (req, res, next) => {
+  try {
+    // find user by user name in lowercase because the data is in lowercase >>
+    let user = await UsersData.findOne({
+      userName: req.params.userName,
+    });
+
+    // if no user found in the db >>
+    if (!user) {
+      console.log("Sorry, no user found.");
+      return res.status(404).json({
+        message: `Sorry, couldn't find anyone named: ${req.params.userName}.`,
+      }); // error 404 = Not Found
+    }
+
+    // display the user name with first letter capitalized >>
+    let firstLetter = user.userName.charAt(0).toUpperCase();
+    let restLetters = user.userName.slice(1);
+    user.userName = firstLetter + restLetters;
+
+    // converting age and fbw into numbers and sorting toolStack alphabetically in a new object >>
+    // let userInfo = {
+    //   userName: user.userName,
+    //   userPass: user.userPass,
+    //   age: parseInt(user.age),
+    //   fbw: parseInt(user.fbw),
+    //   toolStack: user.toolStack.sort(),
+    //   email: user.email,
+    // };
+    // console.log(user);
+    // console.log(userInfo);
+    // assigning userInfo to res.user which is then sent to the controller func >>
+    // res.user = userInfo;
+    res.userName = firstLetter + restLetters;
+  } catch (err) {
+    res.status(500).json({ message: err.message }); // error 500 = Internal Server Error
+  }
+  next();
+};
+// Middleware for displaying age and fbw as numbers >>
+const makeNumMW = async (req, res, next) => {
+  try {
+    // find user by user name in lowercase because the data is in lowercase >>
+    let user = await UsersData.findOne({
+      userName: req.params.userName,
+    });
+
+    // if no user found in the db >>
+    if (!user) {
+      console.log("Sorry, no user found.");
+      return res.status(404).json({
+        message: `Sorry, couldn't find anyone named: ${req.params.userName}.`,
+      }); // error 404 = Not Found
+    }
+
+    // display the user name with first letter capitalized >>
+    let firstLetter = user.userName.charAt(0).toUpperCase();
+    let restLetters = user.userName.slice(1);
+    user.userName = firstLetter + restLetters;
+
+    // converting age and fbw into numbers and sorting toolStack alphabetically in a new object >>
+    let userInfo = {
+      userName: user.userName,
+      userPass: user.userPass,
+      age: parseInt(user.age),
+      fbw: parseInt(user.fbw),
+      toolStack: user.toolStack.sort(),
+      email: user.email,
+    };
+    console.log(user);
+    // console.log(userInfo);
+    // assigning userInfo to res.user which is then sent to the controller func >>
+    res.user = userInfo;
+  } catch (err) {
+    res.status(500).json({ message: err.message }); // error 500 = Internal Server Error
+  }
+  next();
+};
+
+// Middleware for displaying toolStack in alphabetical order >>
+const sortMW = async (req, res, next) => {
+  try {
+    // find user by user name in lowercase because the data is in lowercase >>
+    let user = await UsersData.findOne({
+      userName: req.params.userName,
+    });
+
+    // if no user found in the db >>
+    if (!user) {
+      console.log("Sorry, no user found.");
+      return res.status(404).json({
+        message: `Sorry, couldn't find anyone named: ${req.params.userName}.`,
+      }); // error 404 = Not Found
+    }
+
+    // display the user name with first letter capitalized >>
+    let firstLetter = user.userName.charAt(0).toUpperCase();
+    let restLetters = user.userName.slice(1);
+    user.userName = firstLetter + restLetters;
+
+    // converting age and fbw into numbers and sorting toolStack alphabetically in a new object >>
+    let userInfo = {
+      userName: user.userName,
+      userPass: user.userPass,
+      age: parseInt(user.age),
+      fbw: parseInt(user.fbw),
+      toolStack: user.toolStack.sort(),
+      email: user.email,
+    };
+    console.log(user);
+    // console.log(userInfo);
+    // assigning userInfo to res.user which is then sent to the controller func >>
+    res.user = userInfo;
+  } catch (err) {
+    res.status(500).json({ message: err.message }); // error 500 = Internal Server Error
+  }
   next();
 };
 
@@ -164,8 +283,7 @@ const addNewUser = async (req, res) => {
 // Updating a user in the db completely (PUT http://localhost:5000/users/:userName) >>
 const updateUserCompletely = async (req, res) => {
   try {
-    const updatedUser = await UsersData.updateOne(
-{
+    const updatedUser = await UsersData.updateOne({
       userName: req.body.userName,
       userPass: req.body.userPass,
       age: req.body.age,
@@ -174,7 +292,7 @@ const updateUserCompletely = async (req, res) => {
     });
     res
       .status(200)
-      .json({ message: "Success! User was updated with: " + updatedUser });
+      .json({ message: "Success! User was updated with: " + updatedUser }); // check later: why updatedUser = Object object display
   } catch (err) {
     console.log(`There was an error: ${err}`);
     res.status(400).json({ message: err.message });
@@ -232,6 +350,7 @@ module.exports = {
   checkClassNumMW,
   updateUserMiddleware,
   updateUser,
+  capitlizeFirstCharMW,
   showSingleUser,
   showSingleUserMiddleware,
 };

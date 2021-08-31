@@ -15,6 +15,7 @@ const {
   checkAgeMW,
   checkContentMW,
   checkClassNumMW,
+  capitlizeFirstCharMW,
   updateUserMiddleware,
   updateUser,
 } = require("../controllers/usersController");
@@ -34,6 +35,6 @@ router
 // route to display only one specific user: http://localhost:5000/display/:userName >>
 router
   .route("/display/:userName")
-  .get(showSingleUserMiddleware, showSingleUser);
+  .get(capitlizeFirstCharMW,showSingleUser);
 
 module.exports = router;
