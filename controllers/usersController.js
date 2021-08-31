@@ -5,10 +5,20 @@ const UsersData = require("../model/usersModel");
 // All Middlewares >>
 
 // Create a middleware method that will make sure the object received contains userName, userPass, age, fbw and email.
+// Checking if user information has the required information
 const checkContentMW = async (req, res, next) => {
-  const userData = await UsersData.find();
-  console.log(userData);
-  next();
+  // destructuring the given information from the user >>
+  const { userName, userPass, age, fbw, email } = req.body;
+
+  // if the information is not empty, then move on >>
+  if (userName && userPass && age && fbw && email) {
+    next();
+  } else {
+    res.status(400).json({
+      message:
+        "Sorry, missing information. Please type in the user's name, password, age, fbw number, and email address.",
+    }); // if data is missing in the input then we get error 400 = Bad Request
+  }
 };
 
 // get specific user middleware (GET http://localhost:5000/users/display/:userName) >>
@@ -96,7 +106,7 @@ const showAllUsers = async (req, res) => {
 const addNewUser = async (req, res) => {
   // assigning data from body >>
   const user = new UsersData({
-    userName: req.body.userName.toLowerCase(), // only lowercase names can be saved in the database for now
+    userName: req.body.userName, // only lowercase names can be saved in the database for now
     userPass: req.body.userPass,
     age: req.body.age,
     fbw: req.body.fbw,
@@ -157,6 +167,7 @@ const showSingleUser = async (req, res) => {
 module.exports = {
   showAllUsers,
   addNewUser,
+  checkContentMW,
   updateUserMiddleware,
   updateUser,
   showSingleUser,
