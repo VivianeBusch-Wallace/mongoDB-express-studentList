@@ -4,6 +4,20 @@ const UsersData = require("../model/usersModel");
 
 // All Middlewares >>
 
+// Task: Create a middleware method that will check if the user belongs to our FBW
+// Checking if the user belongs to class fbw-48 >>
+const checkClassNumMW = (req, res, next) => {
+  if (req.body.fbw == 48) {
+    console.log("Success! User's class number is 48!");
+    next();
+  } else {
+    return res.status(400).json({
+      message:
+        "Sorry, we cannot validate your user. They are not a member of class FBW-48.",
+    });
+  }
+};
+
 // Task: Create a middleware method that will check if the user is above 18 years old
 // checking if user's age is above 18
 const checkAgeMW = (req, res, next) => {
@@ -187,6 +201,8 @@ module.exports = {
   showAllUsers,
   addNewUser,
   checkContentMW,
+  checkAgeMW,
+  checkClassNumMW,
   updateUserMiddleware,
   updateUser,
   showSingleUser,
