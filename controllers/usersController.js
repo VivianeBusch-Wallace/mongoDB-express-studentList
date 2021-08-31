@@ -17,11 +17,9 @@ const showSingleUserMiddleware = async (req, res, next) => {
     // if no user found in the db >>
     if (!user) {
       console.log("Sorry, no user found.");
-      return res
-        .status(404)
-        .json({
-          message: `Sorry, couldn't find anyone named: ${req.params.userName}.`,
-        }); // error 404 = Not Found
+      return res.status(404).json({
+        message: `Sorry, couldn't find anyone named: ${req.params.userName}.`,
+      }); // error 404 = Not Found
     }
 
     // display the user name with first letter capitalized >>
@@ -103,27 +101,40 @@ const addNewUser = async (req, res) => {
   }
 };
 
+const updateUserMiddleware = async (req, res, next) => {
+  let user = await UsersData.findOne({ userName: req.params.userName });
+  res.users = user;
+  console.log(user)
+  next();
+};
+
 // update specific user upon their name (GET http://localhost:5000/users/:userName) >>
 const updateUser = async (req, res) => {
   const { userName, userPass, age, fbw, toolStack, email } = req.body;
-  if (userName) {
-    res.user.userName = userName;
-  } else if (userPass) {
-    res.user.userPass = userPass;
-  } else if (age) {
-    res.user.age = age;
-  } else if (fbw) {
-    res.user.fbw = fbw;
-  } else if (toolStack) {
-    res.user.toolStack = toolStack;
-  } else if (email) {
-    res.user.email = email;
-  }
-  // << try switch case?
 
+  // assign user's given data >>
+  if (userName) {
+    res.users.userName = userName;
+  } else if (userPass) {
+    res.users.userPass = userPass;
+  } else if (age) {
+    res.users.age = age;
+  } else if (fbw) {
+    res.users.fbw = fbw;
+  } else if (toolStack) {
+    res.users.toolStack = toolStack;
+  } else if (email) {
+    res.users.email = email;
+  }
+
+  // << try switch case?
+  console.log(res.users);
   try {
-    await res.user.save();
-    res.status(200).json({ message: "user updated with: ", data: res.user });
+    // save new data >>
+    await res.users.save();
+
+    // send response if successful >>
+    res.status(200).json({ message: "user updated with: ", data: res.users });
   } catch (err) {
     res.status(400).json({ message: err.message }); // error 400 = Bad Request
   }
@@ -141,6 +152,7 @@ const showSingleUser = async (req, res) => {
 module.exports = {
   showAllUsers,
   addNewUser,
+  updateUserMiddleware,
   updateUser,
   showSingleUser,
   showSingleUserMiddleware,
