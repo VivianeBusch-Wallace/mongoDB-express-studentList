@@ -14,7 +14,7 @@ const checkClassNumMW = (req, res, next) => {
     return res.status(400).json({
       message:
         "Sorry, we cannot validate your user. They are not a member of class FBW-48.",
-    });
+    }); // << error 400 = Bad Request
   }
 };
 
@@ -28,7 +28,7 @@ const checkAgeMW = (req, res, next) => {
     return res.status(400).json({
       message:
         "Sorry, we cannot validate your user. We don't accept people that are 18 years or under.",
-    });
+    }); // << error 400 = Bad Request
   }
 };
 
@@ -92,6 +92,7 @@ const showSingleUserMiddleware = async (req, res, next) => {
 
   next();
 };
+
 // Middleware for updating with patch >>
 const updateUserMiddleware = async (req, res, next) => {
   let user = await UsersData.findOne({ userName: req.params.userName });
@@ -131,11 +132,14 @@ const showAllUsers = async (req, res) => {
   }
 };
 
+// Task: A POST request endpoint at /user to add new user to DB.
 // adding a new user to database (POST http://localhost:5000/users/) >>
 const addNewUser = async (req, res) => {
+  // Middlewares before this: checkContentMW, checkAgeMW, checkClassNumMW
+
   // assigning data from body >>
   const user = new UsersData({
-    userName: req.body.userName, // only lowercase names can be saved in the database for now
+    userName: req.body.userName,
     userPass: req.body.userPass,
     age: req.body.age,
     fbw: req.body.fbw,
@@ -150,9 +154,30 @@ const addNewUser = async (req, res) => {
     // sending status for success >>
     res
       .status(201)
-      .json({ message: "Success! New user added with: ", newUser }); // new user created
+      .json({ message: "Success! New user added with: ", newUser }); // status 201: new user created
   } catch (err) {
-    res.status(400).json({ message: err.message }); // bad request
+    res.status(400).json({ message: err.message }); // error 400: bad request
+  }
+};
+
+// Task: A PUT request endpoint at /user/:name to update user from DB upon their name.
+// Updating a user in the db completely (PUT http://localhost:5000/users/:userName) >>
+const updateUserCompletely = async (req, res) => {
+  try {
+    const updatedUser = await UsersData.updateOne(
+{
+      userName: req.body.userName,
+      userPass: req.body.userPass,
+      age: req.body.age,
+      fbw: req.body.fbw,
+      email: req.body.email,
+    });
+    res
+      .status(200)
+      .json({ message: "Success! User was updated with: " + updatedUser });
+  } catch (err) {
+    console.log(`There was an error: ${err}`);
+    res.status(400).json({ message: err.message });
   }
 };
 
@@ -195,11 +220,13 @@ const showSingleUser = async (req, res) => {
   // res.status(200).json(userInfo);
 };
 
-//
+// -------------
+// Exporting all functions >>
 
 module.exports = {
   showAllUsers,
   addNewUser,
+  updateUserCompletely,
   checkContentMW,
   checkAgeMW,
   checkClassNumMW,

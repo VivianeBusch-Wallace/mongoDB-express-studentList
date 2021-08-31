@@ -11,6 +11,7 @@ const {
   showSingleUser,
   showSingleUserMiddleware,
   addNewUser,
+  updateUserCompletely,
   checkAgeMW,
   checkContentMW,
   checkClassNumMW,
@@ -25,8 +26,10 @@ router
   .post(checkContentMW, checkAgeMW, checkClassNumMW, addNewUser);
 
 // route with name value: http://localhost:5000/users/:userName >>
-router.route("/:userName").patch(updateUserMiddleware, updateUser);
-// .put(updateUser);
+router
+  .route("/:userName")
+  .patch(updateUserMiddleware, updateUser)
+  .put(checkContentMW, updateUserCompletely);
 
 // route to display only one specific user: http://localhost:5000/display/:userName >>
 router
