@@ -8,14 +8,11 @@ const UsersData = require("../model/usersModel");
 // controller functions >>
 const {
   showAllUsers,
-  showSingleUser,
-  showSingleUserMiddleware,
   addNewUser,
   updateUserCompletely,
   checkAgeMW,
   checkContentMW,
   checkClassNumMW,
-  capitlizeFirstCharMW,
   updateUserMiddleware,
   updateUser,
 } = require("../controllers/usersController");
@@ -30,11 +27,6 @@ router
 router
   .route("/:userName")
   .patch(updateUserMiddleware, updateUser)
-  .put(checkContentMW, updateUserCompletely);
+  .put(checkContentMW, updateUserCompletely); // I added checkContentMW to make sure that at least the required information gets updated
 
-// route to display only one specific user: http://localhost:5000/display/:userName >>
-router
-  .route("/display/:userName")
-  .get(capitlizeFirstCharMW,showSingleUser);
-
-module.exports = router;
+  module.exports = router;
