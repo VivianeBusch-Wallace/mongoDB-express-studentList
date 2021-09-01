@@ -117,11 +117,16 @@ const showSingleUserMiddleware = async (req, res, next) => {
 const capitlizeFirstCharMW = async (req, res, next) => {
   const { userName } = res.user;
 
-  // display the user name with first letter capitalized >>
-  let firstLetter = res.user.userName.charAt(0).toUpperCase();
-  let restLetters = res.user.userName.slice(1);
+  const userNameArray = userName.split(" ");
+  let capitalizedName = [];
+  userNameArray.map((namePart) => {
+    capitalizedName.push(
+      namePart[0].toUpperCase() + namePart.slice(1).toLowerCase()
+    );
+  });
 
-  res.user.userName = firstLetter + restLetters;
+  // display the user name with first letter capitalized >>
+  res.user.userName = capitalizedName.join(" ");
 
   next();
 };
