@@ -5,10 +5,16 @@ const express = require("express");
 const router = express.Router();
 
 // importing functions >>
-const { capitlizeFirstCharMW, showSingleUser, showSingleUserMiddleware } =
-  require.apply("../controllers/userController");
+const {
+    getUserDataMW,
+  capitlizeFirstCharMW,
+  makeNumMW,
+  sortMW,
+  showSingleUser,
+  showSingleUserMiddleware,
+} = require("../controllers/usersController");
 
 // route to display only one specific user: http://localhost:5000/display/:userName >>
-router.route("/:userName").get(capitlizeFirstCharMW, showSingleUser);
+router.route("/:userName").get(getUserDataMW,capitlizeFirstCharMW, showSingleUser);
 
 module.exports = router;
