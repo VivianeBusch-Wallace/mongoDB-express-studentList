@@ -9,6 +9,6 @@ const { capitlizeFirstCharMW, showSingleUser, showSingleUserMiddleware } =
   require.apply("../controllers/userController");
 
 // route to display only one specific user: http://localhost:5000/display/:userName >>
-router.route("/display/:userName").get(capitlizeFirstCharMW, showSingleUser);
+router.route("/:userName").get(capitlizeFirstCharMW, showSingleUser);
 
 module.exports = router;

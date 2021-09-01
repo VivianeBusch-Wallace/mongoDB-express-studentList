@@ -25,9 +25,13 @@ app.get("/", (req, res) => {
   res.status(200).send("Welcome to our User List App.");
 });
 
-// user routes are handled in router/users >>
+// user routes are handled in router/users.js >>
 const users = require("./router/users");
 app.use("/users", users);
+
+// routes for displaying specific users is handled in router/display.js >>
+const display = require("./router/display");
+app.use("/display", display);
 
 // export app (imported in: server.js) >>
 module.exports = app;
