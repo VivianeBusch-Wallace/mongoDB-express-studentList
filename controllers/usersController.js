@@ -133,81 +133,15 @@ const capitlizeFirstCharMW = async (req, res, next) => {
 
 // Middleware for displaying age and fbw as numbers >>
 const makeNumMW = async (req, res, next) => {
-  try {
-    // find user by user name in lowercase because the data is in lowercase >>
-    let user = await UsersData.findOne({
-      userName: req.params.userName,
-    });
-
-    // if no user found in the db >>
-    if (!user) {
-      console.log("Sorry, no user found.");
-      return res.status(404).json({
-        message: `Sorry, couldn't find anyone named: ${req.params.userName}.`,
-      }); // error 404 = Not Found
-    }
-
-    // display the user name with first letter capitalized >>
-    let firstLetter = user.userName.charAt(0).toUpperCase();
-    let restLetters = user.userName.slice(1);
-    user.userName = firstLetter + restLetters;
-
-    // converting age and fbw into numbers and sorting toolStack alphabetically in a new object >>
-    let userInfo = {
-      userName: user.userName,
-      userPass: user.userPass,
-      age: parseInt(user.age),
-      fbw: parseInt(user.fbw),
-      toolStack: user.toolStack.sort(),
-      email: user.email,
-    };
-    console.log(user);
-    // console.log(userInfo);
-    // assigning userInfo to res.user which is then sent to the controller func >>
-    res.user = userInfo;
-  } catch (err) {
-    res.status(500).json({ message: err.message }); // error 500 = Internal Server Error
-  }
+  res.user.age = parseInt(res.user.age);
+  res.user.fbw = parseInt(res.user.fbw);
+  console.log(res.user);
   next();
 };
 
 // Middleware for displaying toolStack in alphabetical order >>
 const sortMW = async (req, res, next) => {
-  try {
-    // find user by user name in lowercase because the data is in lowercase >>
-    let user = await UsersData.findOne({
-      userName: req.params.userName,
-    });
-
-    // if no user found in the db >>
-    if (!user) {
-      console.log("Sorry, no user found.");
-      return res.status(404).json({
-        message: `Sorry, couldn't find anyone named: ${req.params.userName}.`,
-      }); // error 404 = Not Found
-    }
-
-    // display the user name with first letter capitalized >>
-    let firstLetter = user.userName.charAt(0).toUpperCase();
-    let restLetters = user.userName.slice(1);
-    user.userName = firstLetter + restLetters;
-
-    // converting age and fbw into numbers and sorting toolStack alphabetically in a new object >>
-    let userInfo = {
-      userName: user.userName,
-      userPass: user.userPass,
-      age: parseInt(user.age),
-      fbw: parseInt(user.fbw),
-      toolStack: user.toolStack.sort(),
-      email: user.email,
-    };
-    console.log(user);
-    // console.log(userInfo);
-    // assigning userInfo to res.user which is then sent to the controller func >>
-    res.user = userInfo;
-  } catch (err) {
-    res.status(500).json({ message: err.message }); // error 500 = Internal Server Error
-  }
+  res.user.toolStack = res.user.toolStack.sort();
   next();
 };
 
@@ -257,7 +191,7 @@ const addNewUser = async (req, res) => {
 
   // assigning data from body >>
   const user = new UsersData({
-    userName: req.body.userName,
+    userName: req.body.userName.toLowerCase(), // << better to save all names in lower case because the search is case sensitive
     userPass: req.body.userPass,
     age: req.body.age,
     fbw: req.body.fbw,

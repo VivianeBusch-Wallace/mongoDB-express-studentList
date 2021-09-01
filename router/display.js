@@ -6,7 +6,7 @@ const router = express.Router();
 
 // importing functions >>
 const {
-    getUserDataMW,
+  getUserDataMW,
   capitlizeFirstCharMW,
   makeNumMW,
   sortMW,
@@ -15,6 +15,8 @@ const {
 } = require("../controllers/usersController");
 
 // route to display only one specific user: http://localhost:5000/display/:userName >>
-router.route("/:userName").get(getUserDataMW,capitlizeFirstCharMW, showSingleUser);
+router
+  .route("/:userName")
+  .get(getUserDataMW, capitlizeFirstCharMW, makeNumMW, showSingleUser);
 
 module.exports = router;
