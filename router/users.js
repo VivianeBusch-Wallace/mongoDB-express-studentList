@@ -28,8 +28,8 @@ router
 // route with name value: http://localhost:5000/users/:userName >>
 router
   .route("/:userName")
-  // .patch(getUserDataMW, updateUser) // test 1
-  .patch(updateUser) // test 2
+  .patch(getUserDataMW, updateUser) // test 1
+  // .patch(updateUser) // test 2
   .put(updateUserCompletely); // I added checkContentMW to make sure that at least the required information gets updated
 
 // .put(checkContentMW, updateUserCompletely);
