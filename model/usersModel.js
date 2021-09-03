@@ -13,11 +13,11 @@ const userDataSchema = new mongoose.Schema({
     required: [true, "Please type your userpass."],
   },
   age: {
-    type: {},
+    type: String,
     required: [true, "Please give your age."],
   },
   fbw: {
-    type: {},
+    type: String,
     required: [true, "Please give your fbw number."],
   },
   toolStack: {

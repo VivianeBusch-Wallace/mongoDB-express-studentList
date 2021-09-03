@@ -6,14 +6,15 @@ const UsersData = require("../model/usersModel");
 
 // Get user by name from database >>
 const getUserDataMW = async (req, res, next) => {
-  // find user by user name in lowercase because the data is in lowercase >>
-  let user = await UsersData.findOne({
+  // find user by user name in lowercase because the data is also in lowercase >>
+  let user = await UsersData.find({
     userName: req.params.userName.toLowerCase(),
   });
+
   try {
     // if no user found in the db >>
     if (!user) {
-      console.log("Sorry, no user found.");
+      console.log("Sorry, user not found.");
       return res.status(404).json({
         message: `Sorry, couldn't find anyone named: ${req.params.userName}.`,
       }); // error 404 = Not Found
@@ -21,7 +22,9 @@ const getUserDataMW = async (req, res, next) => {
   } catch (err) {
     res.status(500).json({ message: err.message }); // error 500 = Internal Server Error
   }
+
   res.user = user;
+
   next();
 };
 
@@ -66,7 +69,7 @@ const checkContentMW = async (req, res, next) => {
   } else {
     return res.status(400).json({
       message:
-        "Sorry, missing information. Please type in the user's name, password, age, fbw number, and email address.",
+        "123Sorry, missing information. Please type in the user's name, password, age, fbw number, and email address.",
     }); // << if data is missing in the input then we get error 400 = Bad Request
   }
 };
@@ -142,14 +145,6 @@ const makeNumMW = async (req, res, next) => {
 // Middleware for displaying toolStack in alphabetical order >>
 const sortMW = async (req, res, next) => {
   res.user.toolStack = res.user.toolStack.sort();
-  next();
-};
-
-// Middleware for updating with patch >>
-const updateUserMiddleware = async (req, res, next) => {
-  let user = await UsersData.findOne({ userName: req.params.userName });
-  res.users = user;
-  console.log(user);
   next();
 };
 
@@ -233,36 +228,176 @@ const updateUserCompletely = async (req, res) => {
 };
 
 // update specific user upon their name (PATCH http://localhost:5000/users/:userName) >>
+// Test 1 >>
 const updateUser = async (req, res) => {
   const { userName, userPass, age, fbw, toolStack, email } = req.body;
 
-  // assign user's given data >>
-  if (userName) {
-    res.users.userName = userName;
-  } else if (userPass) {
-    res.users.userPass = userPass;
-  } else if (age) {
-    res.users.age = age;
-  } else if (fbw) {
-    res.users.fbw = fbw;
-  } else if (toolStack) {
-    res.users.toolStack = toolStack;
-  } else if (email) {
-    res.users.email = email;
-  }
-  console.log(res.users);
-  try {
-    // save new data >>
-    await res.users.save();
+  console.log("body: ", userName);
+  // console.log(res.user.userName);
 
-    // send response if successful >>
-    res
-      .status(200)
-      .json({ message: "Success! User updated with: ", data: res.users });
-  } catch (err) {
-    res.status(400).json({ message: err.message }); // error 400 = Bad Request
-  }
+  // assign user's given data Hadi's way >>
+  // if (userName) {
+  //   res.user.userName = userName.toLowerCase();
+  // } else if (userPass) {
+  //   res.user.userPass = userPass;
+  // } else if (age) {
+  //   res.user.age = age;
+  // } else if (fbw) {
+  //   res.user.fbw = fbw;
+  // } else if (toolStack) {
+  //   res.user.toolStack = toolStack;
+  // } else if (email) {
+  //   res.user.email = email;
+  // }
+  console.log(res.user);
+
+  // Experiment >>
+  // assign user's given data directly without if >>
+  res.user.userName = userName.toLowerCase();
+  res.user.userPass = userPass;
+  res.user.age = age;
+  res.user.fbw = fbw;
+  res.user.toolStack = toolStack;
+  res.user.email = email;
+
+  // save new data >>
+  res.user.save();
+
+  return res
+    .status(200)
+    .json({ message: `Success! User updated with: `, data: res.user });
 };
+
+// Test 2 for PATCH >>
+// const updateUser = async (req, res) => {
+//   // getting data from body >>
+//   const { userName, userPass, age, fbw, toolStack, email } = req.body;
+//   console.log(userName);
+
+//   // find user by name >>
+//   let userOld = await UsersData.findOne({
+//     userName: req.params.userName.toLowerCase(),
+//   });
+//   console.log("from top: ", userOld);
+
+//   try {
+//     // if no user found in the db >>
+//     if (!user) {
+//       console.log("Sorry, user not found.");
+//       return res.status(404).json({
+//         message: `Sorry, couldn't find anyone named: ${req.params.userName}.`,
+//       }); // error 404 = Not Found
+//     }
+//   } catch (err) {
+//     res.status(500).json({ message: err.message }); // error 500 = Internal Server Error
+//   }
+
+//   let newUserData = {};
+//   // assign user's given data >>
+//   // if (userName) {
+//   //   newUserData.userName = userName;
+//   // } else if (userPass) {
+//   //   newUserData.userPass = userPass;
+//   // } else if (age) {
+//   //   newUserData.age = age;
+//   // } else if (fbw) {
+//   //   newUserData.fbw = fbw;
+//   // } else if (toolStack) {
+//   //   newUserData.toolStack = toolStack;
+//   // } else if (email) {
+//   //   newUserData.email = email;
+//   // }
+//   // console.log(newUserData);
+
+//   // experiment 1 >>
+//   // newUserData.userName = userName;
+//   // newUserData.userPass = userPass;
+//   // newUserData.age = age;
+//   // newUserData.fbw = fbw;
+//   // newUserData.toolStack = toolStack;
+//   // newUserData.email = email;
+
+//   // experiment 2 >>
+//   // newUserData.userName = userName || userOld.userName; // add later: to upper case function
+//   // newUserData.userPass = userPass || userOld.userPass;
+//   // newUserData.age = age || userOld.age;
+//   // newUserData.fbw = fbw || userOld.fbw;
+//   // newUserData.toolStack = toolStack || userOld.toolStack;
+//   // newUserData.email = email || userOld.email;
+//   // console.log(newUserData);
+
+//   // experiment 3 (comment out res.user = newUserData before running) >>
+//   console.log(`req.body.userName: ${userName}`);
+//   console.log(`userOld.userName: ${userOld.userName}`);
+//   console.log(`res.user: ${res.user}`);
+
+//   res.user.userName = req.body.userName.toLowerCase() || userOld.userName; // add later: to upper case function
+//   res.user.userPass = req.body.userPass || userOld.userPass;
+//   res.user.age = req.body.age || userOld.age;
+//   res.user.fbw = req.body.fbw || userOld.fbw;
+//   res.user.toolStack = req.body.toolStack || userOld.toolStack;
+//   res.user.email = req.body.email || userOld.email;
+
+//   // save new data >>
+//   // await newUserData.save(); // this does not work!?
+
+//   //await res.user.save(newUserData); // this gives OK 200 but did not save the changes
+
+//   // res.user = newUserData;
+//   await res.user.save();
+
+//   res
+//     .status(200)
+//     .json({ message: `Success! User updated with: `, newUserData });
+// };
+
+// PATCH Number 1 from Hadi >>
+// const updateOneEmployee = async (req, res) => {
+//   const { name, age, add } = req.body;
+//   if (name) {
+//     res.employee.name = name;
+//   }
+//   if (age != null) {
+//     res.employee.age = age;
+//   }
+//   if (add) {
+//     res.employee.add = add;
+//   }
+//   try {
+//     // save
+//     await res.employee.save();
+//     res.status(200).json({ message: "Employee updated", data: res.employee });
+//   } catch (err) {
+//     // 400 for bad req
+//     res.status(400).json({ message: err.message });
+//   }
+// };
+
+// PATCH Number 2 from Hadi >>
+// userController.patchUserData = async (req, res) => {
+//   try {
+//     const userByName = await UserData.findOneAndUpdate(
+//       { userName: req.params.name },
+//       {
+//         userName: req.body.userName || res.user.userName,
+//         userPass: req.body.userPass || res.user.userPass,
+//         age: req.body.age || res.user.age,
+//         fbw: req.body.fbw || res.user.fbw,
+//         toolStack: req.body.toolStack || res.user.toolStack,
+//         email: req.body.email || res.user.email,
+//       },
+//       {
+//         new: true,
+//       }
+//     );
+//     res.status(200).json({
+//       message: "Some user data got changes :white_check_mark:",
+//       userByName,
+//     });
+//   } catch (err) {
+//     res.status(err.status).json({ message: err.message });
+//   }
+// };
 
 // get specific user by name (GET http://localhost:5000/users/display/:userName) >>
 const showSingleUser = async (req, res) => {
@@ -282,7 +417,7 @@ module.exports = {
   checkContentMW,
   checkAgeMW,
   checkClassNumMW,
-  updateUserMiddleware,
+  // updateUserMiddleware,
   updateUser,
   capitlizeFirstCharMW,
   makeNumMW,
