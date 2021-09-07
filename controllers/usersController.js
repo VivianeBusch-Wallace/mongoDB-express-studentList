@@ -233,13 +233,13 @@ const updateUser = async (req, res) => {
   const { userName, userPass, age, fbw, toolStack, email } = req.body;
 
   // assign user's given data directly without if >>
-  res.user.userName = userName.toLowerCase() || res.user.userName;
+  res.user.userName = userName.toLowerCase() || res.user.userName.toLowerCase();
   res.user.userPass = userPass || res.user.userPass;
   res.user.age = age || res.user.age;
   res.user.fbw = fbw || res.user.fbw;
   res.user.toolStack = toolStack || res.user.toolStack;
   res.user.email = email || res.user.email;
-
+  console.log(res.user.userName);
   // save new data >>
   try {
     await res.user.save();
