@@ -22,8 +22,8 @@ const {
 router
   .route("/")
   .get(showAllUsers)
-  // .post(checkContentMW, checkAgeMW, checkClassNumMW, addNewUser);
-  .post(checkAgeMW, checkClassNumMW, addNewUser); // why does checkContentMW influence PUT!? Also PATCH???
+  .post(checkContentMW, checkAgeMW, checkClassNumMW, addNewUser);
+//.post(checkAgeMW, checkClassNumMW, addNewUser);
 
 // route with name value: http://localhost:5000/users/:userName >>
 router
@@ -35,3 +35,8 @@ router
 // .put(checkContentMW, updateUserCompletely);
 
 module.exports = router;
+
+// Notes:
+
+// why does checkContentMW influence PUT!?
+// Why not anymore?

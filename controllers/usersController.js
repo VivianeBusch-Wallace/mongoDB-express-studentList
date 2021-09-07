@@ -7,7 +7,7 @@ const UsersData = require("../model/usersModel");
 // Get user by name from database >>
 const getUserDataMW = async (req, res, next) => {
   // find user by user name in lowercase because the data is also in lowercase >>
-  let user = await UsersData.find({
+  let user = await UsersData.findOne({
     userName: req.params.userName.toLowerCase(),
   });
 
@@ -232,124 +232,26 @@ const updateUserCompletely = async (req, res) => {
 const updateUser = async (req, res) => {
   const { userName, userPass, age, fbw, toolStack, email } = req.body;
 
-  console.log("body: ", userName);
-  // console.log(res.user.userName);
-
-  // assign user's given data Hadi's way >>
-  // if (userName) {
-  //   res.user.userName = userName.toLowerCase();
-  // } else if (userPass) {
-  //   res.user.userPass = userPass;
-  // } else if (age) {
-  //   res.user.age = age;
-  // } else if (fbw) {
-  //   res.user.fbw = fbw;
-  // } else if (toolStack) {
-  //   res.user.toolStack = toolStack;
-  // } else if (email) {
-  //   res.user.email = email;
-  // }
-  console.log(res.user);
-
-  // Experiment >>
   // assign user's given data directly without if >>
-  res.user.userName = userName.toLowerCase();
-  res.user.userPass = userPass;
-  res.user.age = age;
-  res.user.fbw = fbw;
-  res.user.toolStack = toolStack;
-  res.user.email = email;
+  res.user.userName = userName.toLowerCase() || res.user.userName;
+  res.user.userPass = userPass || res.user.userPass;
+  res.user.age = age || res.user.age;
+  res.user.fbw = fbw || res.user.fbw;
+  res.user.toolStack = toolStack || res.user.toolStack;
+  res.user.email = email || res.user.email;
 
   // save new data >>
-  res.user.save();
-
-  return res
-    .status(200)
-    .json({ message: `Success! User updated with: `, data: res.user });
+  try {
+    await res.user.save();
+    res
+      .status(200)
+      .json({ message: `Success! User updated with: `, data: res.user });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
 };
 
 // Test 2 for PATCH >>
-// const updateUser = async (req, res) => {
-//   // getting data from body >>
-//   const { userName, userPass, age, fbw, toolStack, email } = req.body;
-//   console.log(userName);
-
-//   // find user by name >>
-//   let userOld = await UsersData.findOne({
-//     userName: req.params.userName.toLowerCase(),
-//   });
-//   console.log("from top: ", userOld);
-
-//   try {
-//     // if no user found in the db >>
-//     if (!user) {
-//       console.log("Sorry, user not found.");
-//       return res.status(404).json({
-//         message: `Sorry, couldn't find anyone named: ${req.params.userName}.`,
-//       }); // error 404 = Not Found
-//     }
-//   } catch (err) {
-//     res.status(500).json({ message: err.message }); // error 500 = Internal Server Error
-//   }
-
-//   let newUserData = {};
-//   // assign user's given data >>
-//   // if (userName) {
-//   //   newUserData.userName = userName;
-//   // } else if (userPass) {
-//   //   newUserData.userPass = userPass;
-//   // } else if (age) {
-//   //   newUserData.age = age;
-//   // } else if (fbw) {
-//   //   newUserData.fbw = fbw;
-//   // } else if (toolStack) {
-//   //   newUserData.toolStack = toolStack;
-//   // } else if (email) {
-//   //   newUserData.email = email;
-//   // }
-//   // console.log(newUserData);
-
-//   // experiment 1 >>
-//   // newUserData.userName = userName;
-//   // newUserData.userPass = userPass;
-//   // newUserData.age = age;
-//   // newUserData.fbw = fbw;
-//   // newUserData.toolStack = toolStack;
-//   // newUserData.email = email;
-
-//   // experiment 2 >>
-//   // newUserData.userName = userName || userOld.userName; // add later: to upper case function
-//   // newUserData.userPass = userPass || userOld.userPass;
-//   // newUserData.age = age || userOld.age;
-//   // newUserData.fbw = fbw || userOld.fbw;
-//   // newUserData.toolStack = toolStack || userOld.toolStack;
-//   // newUserData.email = email || userOld.email;
-//   // console.log(newUserData);
-
-//   // experiment 3 (comment out res.user = newUserData before running) >>
-//   console.log(`req.body.userName: ${userName}`);
-//   console.log(`userOld.userName: ${userOld.userName}`);
-//   console.log(`res.user: ${res.user}`);
-
-//   res.user.userName = req.body.userName.toLowerCase() || userOld.userName; // add later: to upper case function
-//   res.user.userPass = req.body.userPass || userOld.userPass;
-//   res.user.age = req.body.age || userOld.age;
-//   res.user.fbw = req.body.fbw || userOld.fbw;
-//   res.user.toolStack = req.body.toolStack || userOld.toolStack;
-//   res.user.email = req.body.email || userOld.email;
-
-//   // save new data >>
-//   // await newUserData.save(); // this does not work!?
-
-//   //await res.user.save(newUserData); // this gives OK 200 but did not save the changes
-
-//   // res.user = newUserData;
-//   await res.user.save();
-
-//   res
-//     .status(200)
-//     .json({ message: `Success! User updated with: `, newUserData });
-// };
 
 // PATCH Number 1 from Hadi >>
 // const updateOneEmployee = async (req, res) => {
@@ -417,13 +319,13 @@ module.exports = {
   checkContentMW,
   checkAgeMW,
   checkClassNumMW,
-  // updateUserMiddleware,
   updateUser,
   capitlizeFirstCharMW,
   makeNumMW,
   sortMW,
   showSingleUser,
   showSingleUserMiddleware,
+  // updateUserMiddleware,
 };
 
 // ------------------------
