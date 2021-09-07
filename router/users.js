@@ -38,5 +38,5 @@ module.exports = router;
 
 // Notes:
 
-// why does checkContentMW influence PUT!?
+// why does checkContentMW from POST influence PUT!?
 // Why not anymore?
