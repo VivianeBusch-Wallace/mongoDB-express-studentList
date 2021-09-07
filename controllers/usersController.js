@@ -428,3 +428,9 @@ module.exports = {
 
 // ------------------------
 // Notes
+/*
+This is where the idea with the if else if else if else comes from:
+https://github.com/Fbw-48/live-coding/commit/38572f3895a9855a96304d1aec26fa1b0885b0b1
+
+
+*/
